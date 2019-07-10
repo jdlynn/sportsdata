@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os
 from app import create_app, db
+from app.models import Stock
 # from app.models import User, Post, Message, Notification, Task
 
 
