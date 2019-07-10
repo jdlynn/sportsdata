@@ -3,7 +3,7 @@ from app import db
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True, unique=True)
+    name = db.Column(db.String(64), index=True)
     team= db.Column(db.String(64), index=True)
     position = db.Column(db.String(10))
     age = db.Column(db.Integer)
