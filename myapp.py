@@ -4,7 +4,7 @@ import click
 from flask import Flask
 from flask.cli import with_appcontext
 from app import create_app, db
-from app.models import Stock
+from app.models import Stock, Projection
 import requests
 
 # from app.models import User, Post, Message, Notification, Task
@@ -28,6 +28,33 @@ def add_stock():
                     initialVal=5) 
   
         db.session.add(myplayer)
+        db.session.commit()
+
+@app.cli.command()
+def add_projection():
+    response = requests.get('https://api.sportsdata.io/v3/nfl/projections/json/PlayerSeasonProjectionStats/2019?key=eaf6aafbc0734ec7bc6e91b70072cd58')
+    projections = response.json()
+    for projection in projections:
+        myprojection = Projection( stockID=projection['PlayerID'],
+                    passingYards=projection['PassingYards'], 
+                    passingInterceptions=projection['PassingInterceptions'], 
+                    rushingAttempts=projection['RushingAttempts'],
+                    rushingYards=projection['RushingYards'], 
+                    rushingTouchdowns=projection['RushingTouchdowns'], 
+                    receptions=projection['Receptions'], 
+                    receivingYards=projection['ReceivingYards'],
+                    receivingTDs=projection['ReceivingTouchdowns'],
+                    fumblesLost=projection['FumblesLost'], 
+                    puntReturnTDs=projection['PuntReturnTouchdowns'], 
+                    kickReturnTDs=projection['KickReturnTouchdowns'], 
+                    twoPointConvertPasses=projection['TwoPointConversionPasses'],
+                    twoPointConvertRuns=projection['TwoPointConversionRuns'], 
+                    twoPointConvertReceptions=projection['TwoPointConversionReceptions'], 
+                    fantasyPoints=projection['FantasyPoints'], 
+                    fantasyPointsPPR=projection['FantasyPointsPPR']
+                    ) 
+  
+        db.session.add(myprojection)
         db.session.commit()
 
 @app.shell_context_processor
