@@ -16,6 +16,7 @@ class Projection(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     stockID = db.Column(db.Integer, index=True)
     passingYards = db.Column(db.Float)
+    passingTDs  =db.Column(db.Float)
     passingInterceptions = db.Column(db.Float)
     rushingAttempts = db.Column(db.Float)
     rushingYards = db.Column(db.Float)

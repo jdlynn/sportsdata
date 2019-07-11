@@ -37,6 +37,7 @@ def add_projection():
     for projection in projections:
         myprojection = Projection( stockID=projection['PlayerID'],
                     passingYards=projection['PassingYards'], 
+                    passingTDs = projection['PassingTouchdowns'],
                     passingInterceptions=projection['PassingInterceptions'], 
                     rushingAttempts=projection['RushingAttempts'],
                     rushingYards=projection['RushingYards'], 
