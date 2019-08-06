@@ -23,8 +23,34 @@ class Stock(db.Model):
     @hybrid_property
     def projval(self):
         if not self.projections:
-            return 100
-        return self.projections.rushingYards
+            return 5
+        myProj = self.projections
+        if self.position == "TE":
+            points = (myProj.passingYards * .04 + 
+                      myProj.passingTDs * 4 + 
+                      myProj.passingInterceptions * -2 + 
+                      myProj.rushingAttempts * .25 + 
+                      myProj.rushingYards * .1 + 
+                      myProj.rushingTouchdowns * 6 + 
+                      myProj.receptions * 1.5 + 
+                      myProj.receivingYards * .125 + 
+                      myProj.receivingTDs * 6 + 
+                      myProj.fumblesLost * -2) / 8
+        else:
+            points = (
+                      myProj.passingYards * .04 + 
+                      myProj.passingTDs * 4 + 
+                      myProj.passingInterceptions * -2 + 
+                      myProj.rushingAttempts * .25 + 
+                      myProj.rushingYards * .1 + 
+                      myProj.rushingTouchdowns * 6 + 
+                      myProj.receptions * 1 + 
+                      myProj.receivingYards * .1 + 
+                      myProj.receivingTDs * 6 + 
+                      myProj.fumblesLost * -2) / 8
+        if points < 5:
+            points = 5
+        return points
 
 class Projection(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -12,7 +12,7 @@ import requests
 
 app = create_app()
 
-@app.cli.command()
+@app.cli.command('add_stock')
 def add_stock():
     response = requests.get('https://api.sportsdata.io/v3/nfl/scores/json/Players?key=eaf6aafbc0734ec7bc6e91b70072cd58')
     players = response.json()
@@ -31,7 +31,7 @@ def add_stock():
         db.session.add(myplayer)
         db.session.commit()
 
-@app.cli.command()
+@app.cli.command('add_projection')
 def add_projection():
     response = requests.get('https://api.sportsdata.io/v3/nfl/projections/json/PlayerSeasonProjectionStats/2019?key=eaf6aafbc0734ec7bc6e91b70072cd58')
     projections = response.json()
@@ -59,34 +59,13 @@ def add_projection():
         db.session.add(myprojection)
         db.session.commit()
 
-@app.cli.command()
+@app.cli.command('add_initialValue')
 def add_initialValue():
     from sqlalchemy.orm import joinedload
-    query = Stock
-   
-    for projection in projections:
-        myprojection = Projection( stockID=projection['PlayerID'],
-                    passingYards=projection['PassingYards'], 
-                    passingTDs = projection['PassingTouchdowns'],
-                    passingInterceptions=projection['PassingInterceptions'], 
-                    rushingAttempts=projection['RushingAttempts'],
-                    rushingYards=projection['RushingYards'], 
-                    rushingTouchdowns=projection['RushingTouchdowns'], 
-                    receptions=projection['Receptions'], 
-                    receivingYards=projection['ReceivingYards'],
-                    receivingTDs=projection['ReceivingTouchdowns'],
-                    fumblesLost=projection['FumblesLost'], 
-                    puntReturnTDs=projection['PuntReturnTouchdowns'], 
-                    kickReturnTDs=projection['KickReturnTouchdowns'], 
-                    twoPointConvertPasses=projection['TwoPointConversionPasses'],
-                    twoPointConvertRuns=projection['TwoPointConversionRuns'], 
-                    twoPointConvertReceptions=projection['TwoPointConversionReceptions'], 
-                    fantasyPoints=projection['FantasyPoints'], 
-                    fantasyPointsPPR=projection['FantasyPointsPPR']
-                ) 
-  
-        db.session.add(myprojection)
-        db.session.commit()
+    stocks = Stock.query.options(joinedload('projections')).all()
+    for stock in stocks:
+        stock.initialVal = stock.projval
+    db.session.commit()
 
 @app.shell_context_processor
 def make_shell_context():
