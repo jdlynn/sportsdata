@@ -25,7 +25,8 @@ def add_stock():
                     experience=player['Experience'], 
                     jersey=player['Number'], 
                     photoURL=player['PhotoUrl'],
-                    initialVal=5) 
+                    initialVal=5
+                ) 
   
         db.session.add(myplayer)
         db.session.commit()
@@ -53,13 +54,42 @@ def add_projection():
                     twoPointConvertReceptions=projection['TwoPointConversionReceptions'], 
                     fantasyPoints=projection['FantasyPoints'], 
                     fantasyPointsPPR=projection['FantasyPointsPPR']
-                    ) 
+                ) 
+  
+        db.session.add(myprojection)
+        db.session.commit()
+
+@app.cli.command()
+def add_initialValue():
+    from sqlalchemy.orm import joinedload
+    query = Stock
+   
+    for projection in projections:
+        myprojection = Projection( stockID=projection['PlayerID'],
+                    passingYards=projection['PassingYards'], 
+                    passingTDs = projection['PassingTouchdowns'],
+                    passingInterceptions=projection['PassingInterceptions'], 
+                    rushingAttempts=projection['RushingAttempts'],
+                    rushingYards=projection['RushingYards'], 
+                    rushingTouchdowns=projection['RushingTouchdowns'], 
+                    receptions=projection['Receptions'], 
+                    receivingYards=projection['ReceivingYards'],
+                    receivingTDs=projection['ReceivingTouchdowns'],
+                    fumblesLost=projection['FumblesLost'], 
+                    puntReturnTDs=projection['PuntReturnTouchdowns'], 
+                    kickReturnTDs=projection['KickReturnTouchdowns'], 
+                    twoPointConvertPasses=projection['TwoPointConversionPasses'],
+                    twoPointConvertRuns=projection['TwoPointConversionRuns'], 
+                    twoPointConvertReceptions=projection['TwoPointConversionReceptions'], 
+                    fantasyPoints=projection['FantasyPoints'], 
+                    fantasyPointsPPR=projection['FantasyPointsPPR']
+                ) 
   
         db.session.add(myprojection)
         db.session.commit()
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'Stock': Stock}
+    return {'db': db, 'Stock': Stock, 'Projection': Projection}
 
 

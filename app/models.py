@@ -1,5 +1,7 @@
 from flask import current_app, url_for
 from app import db
+import datetime
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,10 +13,22 @@ class Stock(db.Model):
     jersey = db.Column(db.Integer)
     photoURL = db.Column(db.String(100))
     initialVal = db.Column(db.Integer)
+    updateDate = db.Column(db.DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
+    createDate = db.Column(db.DateTime, default=datetime.datetime.now())
+    projections = db.relationship('Projection', backref=db.backref('stocks', lazy=True), uselist=False)
+
+    def __repr__(self):
+        return 'Stock {}'.format(self.name)
+
+    @hybrid_property
+    def projval(self):
+        if not self.projections:
+            return 100
+        return self.projections.rushingYards
 
 class Projection(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    stockID = db.Column(db.Integer, index=True)
+    stockID = db.Column(db.Integer, db.ForeignKey('stock.id'))
     passingYards = db.Column(db.Float)
     passingTDs  =db.Column(db.Float)
     passingInterceptions = db.Column(db.Float)
@@ -32,4 +46,9 @@ class Projection(db.Model):
     twoPointConvertReceptions = db.Column(db.Float)
     fantasyPoints = db.Column(db.Float)
     fantasyPointsPPR = db.Column(db.Float)
+    updateDate = db.Column(db.DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
+    createDate = db.Column(db.DateTime, default=datetime.datetime.now())
+
+    def __repr__(self):
+        return 'Projection {}'.format(self.stockID)
     
