@@ -7,3 +7,13 @@
 3)  pipenv install flask
 4)  pipenv install sqlalchemy
 5)  pipenv install migrate
+
+### To load the projections enter:
+```
+flask add_projection
+```
+
+### to load the stock enter:
+```
+flask add_stock
+```
